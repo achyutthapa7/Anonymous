@@ -1,5 +1,4 @@
-const API_KEY = "AIzaSyAjyrneC3XzOt36aqQorlbaN7lkyhff81c";
-const API_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${API_KEY}`;
+const API_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.API_KEY}`;
 const analyzeComment = async (commentText, languages) => {
   try {
     const response = await fetch(API_URL, {

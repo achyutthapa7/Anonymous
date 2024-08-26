@@ -4,7 +4,7 @@ import express from "express";
 const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import route from "./routes/routes.js";
+import userRoute from "./routes/user.routes.js";
 const port = process.env.PORT || 3000;
 import mongoose from "mongoose";
 
@@ -18,14 +18,13 @@ mongoose
     console.log("Failed to connect to MongoDB");
   });
 
-
 //middlewares
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api", route);
+app.use("/api/user", userRoute);
 app.listen(port, () => {
   console.log("listening on port " + port);
 });

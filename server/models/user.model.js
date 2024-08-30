@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    userProfileStatus: {
+      type: String,
+      default: "not anonymous",
+    },
   },
   { timestamps: true }
 );

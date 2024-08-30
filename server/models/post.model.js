@@ -3,8 +3,7 @@ const postSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      default: null,
-      required: true,
+      ref: "User",
     },
     anonymousUser: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +29,13 @@ const postSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
+        default: [],
+      },
+    ],
+    category: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post_Category",
         default: [],
       },
     ],

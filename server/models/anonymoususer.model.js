@@ -20,6 +20,10 @@ const schema = new mongoose.Schema(
     token: {
       type: String,
     },
+    userProfileStatus: {
+      type: String,
+      default: "anonymous",
+    },
   },
   { timestamps: true }
 );

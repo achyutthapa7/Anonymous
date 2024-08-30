@@ -12,11 +12,6 @@ const replySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  replies: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Replies",
-    },
-  ],
+  replies: [{ type: String, default: [] }],
 });
 export const replyModel = mongoose.model("Replies", replySchema);

@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "not anonymous",
     },
+    preferedCategory: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

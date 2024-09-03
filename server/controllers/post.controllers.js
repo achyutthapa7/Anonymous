@@ -2,6 +2,7 @@ import { analyzeComment } from "../helpers/analyzetext.js";
 import { anonymousModel } from "../models/anonymoususer.model.js";
 import { commentModel } from "../models/comment.model.js";
 import { postModel } from "../models/post.model.js";
+import { postCategoryModel } from "../models/postCategory.model.js";
 import { replyModel } from "../models/replies.model.js";
 import { userModel } from "../models/user.model.js";
 export const addImages = async (req, res) => {
@@ -24,11 +25,14 @@ export const addImages = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const { content, images } = req.body;
+  const { content, images, category } = req.body;
   try {
-    if (!content) {
+    if (!content)
       return res.status(400).json({ message: "post requires some content" });
-    }
+    if (!category)
+      return res
+        .status(402)
+        .json({ message: "post requires atleast one category" });
     const analyzedText = await analyzeComment(content);
     const {
       PROFANITY,
@@ -54,8 +58,9 @@ export const createPost = async (req, res) => {
       const newPost = new postModel({
         user: req.rootUser._id,
         anonumousUser: req.rootUser._id,
-        content,
+        content: content.trim(),
         images,
+        category,
       });
 
       await newPost.save();
@@ -123,7 +128,7 @@ export const editPost = async (req, res) => {
       return res.status(400).json({ message: "post requires some content" });
     const updatedPost = await postModel.findOneAndUpdate(
       { _id: postId },
-      { content },
+      { content: content.trim() },
       { new: true }
     );
     if (!updatedPost) {
@@ -286,7 +291,7 @@ export const commentOnPost = async (req, res) => {
           currentUser.userProfileStatus === "anonymous"
             ? currentUser._id
             : null,
-        content,
+        content: content.trim(),
       });
       const updatedPostAfterCommnet = await postModel.findOneAndUpdate(
         { _id: postId },
@@ -356,7 +361,7 @@ export const replyOnComment = async (req, res) => {
           currentUser.userProfileStatus === "anonymous"
             ? currentUser._id
             : null,
-        content,
+        content: content.trim(),
       });
       const updatedCommentAfterReply = await commentModel.findOneAndUpdate(
         { _id: commentId },
@@ -418,7 +423,7 @@ export const replyOnReply = async (req, res) => {
     } else {
       await replyModel.findOneAndUpdate(
         { _id: replyId },
-        { $push: { replies: content } }
+        { $push: { replies: { content: content.trim() } } }
       );
       res.status(200).json({ message: "reply to a reply successfully" });
     }
@@ -429,3 +434,48 @@ export const replyOnReply = async (req, res) => {
       .send("Error while replying on reply " + error.message);
   }
 };
+
+export const getAllPosts = async (req, res) => {
+  try {
+    const allPosts = await postModel.find();
+    if (!allPosts) return res.status(404).json({ message: "there is no post" });
+    res.status(200).json(allPosts);
+  } catch (error) {
+    console.log("Error while getting all posts " + error.message);
+    return res
+      .status(500)
+      .send("Error while getting all posts " + error.message);
+  }
+};
+
+export const getAllPostsByCategory = async (req, res) => {
+  try {
+    const currentUser =
+      (await userModel.findOne({ _id: req.rootUser._id })) ||
+      (await anonymousModel.findOne({ _id: req.rootUser._id }));
+
+    // const allPostByCategory = await postModel.find({
+    //   user: { $ne: currentUser._id },
+    //   category: { $in: currentUser.preferedCategory },
+    // });
+    const allPostByCategory = await postModel.aggregate([
+      {
+        $match: {
+          user: { $ne: currentUser._id },
+          category: { $in: currentUser.preferedCategory },
+        },
+      },
+    ]);
+    if (!allPostByCategory)
+      return res.status(404).json({ message: "there is no post" });
+    res.status(200).json(allPostByCategory);
+  } catch (error) {
+    console.log("Error while getting all posts by category " + error.message);
+    return res
+      .status(500)
+      .send("Error while getting all posts by category " + error.message);
+  }
+};
+
+//edit comment and replies
+//delete comment and replies

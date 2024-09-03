@@ -6,6 +6,8 @@ import {
   deletePost,
   dislikeUndislikePost,
   editPost,
+  getAllPosts,
+  getAllPostsByCategory,
   likeUnlikePost,
   replyOnComment,
   replyOnReply,
@@ -36,5 +38,6 @@ route.post(
 route.post("/commentOnPost/:postId", authentication, commentOnPost);
 route.post("/replyOnComment/:commentId", authentication, replyOnComment);
 route.post("/replyOnReply/:replyId", authentication, replyOnReply);
-
+route.get("/getAllPosts", authentication, getAllPosts);
+route.get("/getAllPostsByCategory", authentication, getAllPostsByCategory);
 export default route;

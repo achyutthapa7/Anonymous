@@ -70,8 +70,9 @@ export const registration = async (req, res) => {
     const heading = "verify your email";
     const paragraph =
       "Thank you for registering with us. Please use the verification code below to complete your registration:";
-    const { email, userName, password, confirmPassword } = req.body;
-    if (email && userName && password && confirmPassword) {
+    const { email, userName, password, confirmPassword, preferedCategory } =
+      req.body;
+    if (email && userName && password && confirmPassword && preferedCategory) {
       const hashedPassword = await bcrypt.hash(password, 10);
       const userExistByEmail = await userModel.findOne({ email });
       const userExistByUserName = await userModel.findOne({ userName });
@@ -86,6 +87,7 @@ export const registration = async (req, res) => {
         userName,
         password: hashedPassword,
         verificationCode,
+        preferedCategory,
       });
       await newUser.save();
       res.status(201).json({ message: "User saved successfully", newUser });
@@ -139,6 +141,8 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     if (email && password) {
       const user = await userModel.findOne({ email });
+      // if (user.isVerified === false)
+      //   return res.status(403).json({ message: "Please verify your email" });
       if (!user)
         return res.status(401).json({ error: "Invalid email or password" });
       const isMatch = await bcrypt.compare(password, user.password);

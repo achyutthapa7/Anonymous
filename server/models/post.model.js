@@ -32,13 +32,10 @@ const postSchema = new mongoose.Schema(
         default: [],
       },
     ],
-    category: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Post_Category",
-        default: [],
-      },
-    ],
+    category: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

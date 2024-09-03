@@ -24,6 +24,10 @@ const schema = new mongoose.Schema(
       type: String,
       default: "anonymous",
     },
+    preferedCategory: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

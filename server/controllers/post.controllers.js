@@ -477,5 +477,6 @@ export const getAllPostsByCategory = async (req, res) => {
   }
 };
 
+export const editComment = async (req, res) => {};
 //edit comment and replies
 //delete comment and replies

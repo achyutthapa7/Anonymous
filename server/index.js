@@ -24,10 +24,16 @@ app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use("/images", express.static("./upload/images"));
+app.use("/images", express.static("./upload/images/"));
 
 app.use("/api/user", userRoute);
 app.use("/api/post", postRoute);
+
+app.get("/:name", (req, res) => {
+  const name = req.params.name;
+  res.send("Hell " + name);
+});
+
 app.listen(port, () => {
   console.log("listening on port " + port);
 });
